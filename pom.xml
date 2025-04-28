@@ -18,14 +18,6 @@
         <module>billing-service</module>
         <module>wallet-service</module>
         <module>ledger-service</module>
-        <module>payment-service</module>
-        <module>order-service</module>
-        <module>inventory-service</module>
-        <module>shipment-service</module>
-        <module>billing-service</module>
-        <module>common</module>
-        <module>wallet-service</module>
-        <module>ledger-service</module>
         <module>common</module>
     </modules>
 
