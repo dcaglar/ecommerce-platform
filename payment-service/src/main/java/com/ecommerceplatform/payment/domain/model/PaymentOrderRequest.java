@@ -1,4 +1,6 @@
-package com.ecommerceplatform.payment.api.dto;
+package com.ecommerceplatform.payment.domain.model;
+
+import com.ecommerceplatform.payment.api.dto.AmountDto;
 
 import java.util.Objects;
 

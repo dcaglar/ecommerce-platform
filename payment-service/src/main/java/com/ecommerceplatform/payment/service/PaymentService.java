@@ -2,11 +2,14 @@ package com.ecommerceplatform.payment.service;
 
 import com.ecommerceplatform.common.event.EventEnvelope;
 import com.ecommerceplatform.common.event.OutboxEvent;
-import com.ecommerceplatform.payment.api.dto.PaymentRequest;
+import com.ecommerceplatform.payment.api.dto.PaymentOrderRequestDTO;
+import com.ecommerceplatform.payment.api.dto.PaymentRequestDTO;
 import com.ecommerceplatform.payment.domain.model.Amount;
 import com.ecommerceplatform.payment.domain.model.Payment;
 import com.ecommerceplatform.payment.domain.model.PaymentOrder;
 import com.ecommerceplatform.payment.domain.event.PaymentOrderCreatedEvent;
+import com.ecommerceplatform.payment.domain.model.PaymentRequest;
+import com.ecommerceplatform.payment.infrastructure.persistence.mapper.PaymentRequestMapper;
 import com.ecommerceplatform.payment.infrastructure.persistence.repository.OutboxEventRepository;
 import com.ecommerceplatform.payment.infrastructure.persistence.repository.PaymentOrderRepository;
 import com.ecommerceplatform.payment.infrastructure.persistence.repository.PaymentRepository;
@@ -40,15 +43,15 @@ public class PaymentService {
     }
 
     @Transactional
-    public void createPayment(PaymentRequest request) {
+    public void createPayment(PaymentRequestDTO requestDTO) {
         String paymentId = UUID.randomUUID().toString();
-
+        PaymentRequest request = PaymentRequestMapper.toDomain(requestDTO);
         // Save Payment
         Payment payment = createPaymentEntity(paymentId, request);
         paymentRepository.save(payment);
 
         // Save Payment Orders
-        List<PaymentOrder> paymentOrders = createPaymentOrders(paymentId, request.getPaymentOrders());
+        List<PaymentOrder> paymentOrders = createPaymentOrders(paymentId, requestDTO.getPaymentOrders());
         paymentOrderRepository.saveAll(paymentOrders);
 
         // Create and Save Outbox Events for each PaymentOrder
@@ -59,14 +62,14 @@ public class PaymentService {
         return new Payment(
                 paymentId,
                 request.getBuyerId(),
-                toDomainAmount(request.getTotalAmount()),
+                request.getTotalAmount(),
                 request.getOrderId(),
                 "INITIATED",
                 LocalDateTime.now()
         );
     }
 
-    private List<PaymentOrder> createPaymentOrders(String paymentId, List<com.ecommerceplatform.payment.api.dto.PaymentOrderRequest> paymentOrderRequests) {
+    private List<PaymentOrder> createPaymentOrders(String paymentId, List<PaymentOrderRequestDTO> paymentOrderRequests) {
         return paymentOrderRequests.stream()
                 .map(poRequest -> new PaymentOrder(
                         UUID.randomUUID().toString(),

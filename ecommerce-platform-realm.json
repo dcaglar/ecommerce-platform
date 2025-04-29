@@ -1,0 +1,22 @@
+{
+  "realm": "ecommerce-platform",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "payment-service",
+      "secret": "my-payment-client-secret",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "payment:write",
+        "description": "Role required to call the payment endpoint"
+      }
+    ]
+  }
+}
